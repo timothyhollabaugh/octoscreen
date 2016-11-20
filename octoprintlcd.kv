@@ -1,0 +1,727 @@
+#:kivy 1.9.1
+#:import ToggleButtonBehavior kivy.uix.behaviors.ToggleButtonBehavior
+#:import datetime datetime
+#:import get utils.get
+#:import time utils.time
+
+<TimeLabel@BoxLayout>:
+    time: ""
+    title: ""
+
+    spacing: 2
+    orientation: 'vertical'
+
+    Label:
+        text: root.title
+        font_size: 24
+        size_hint: 1, None
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'center'
+
+    Label:
+        text: root.time
+        font_size: 36
+        size_hint: 1, None
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'center'
+<TemperatureLabel>:
+    title: ""
+    name: ""
+    target: ""
+    actual: ""
+
+
+    spacing: 2
+    #padding: 5
+
+    Label:
+        text: root.title
+        font_size: 24
+        size_hint: 0.3, 1
+        text_size: self.width, self.texture_size[1]
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+
+    Label:
+        text: (root.actual if root.actual != '' else "--") + " " + unichr(176) + "C"
+        font_size: 24
+        size_hint: 0.35, 1
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+
+    Label:
+        text: (root.target if root.target != '' else "--") + " " + unichr(176) + "C"
+        font_size: 24
+        size_hint: 0.35, 1
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+    Label:
+        size_hint: 0.1, 1
+<TemperatureBox>:
+    bed: False
+    tools: 0
+    buttons: False
+<FilamentLabel>:
+    name: ""
+    title: ""
+    length: ""
+    volume: ""
+
+    spacing: 2
+    padding: 5
+
+    Label:
+        text: root.title
+        font_size: 24
+        size_hint: 0.4, 1
+        #text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+
+    Label:
+        text: (root.length if root.length != '' else "- -") + "m"
+        font_size: 24
+        size_hint: 0.25, 1
+        #text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+    Label:
+        text: (root.volume if root.volume != '' else "- -") + "cm" + unichr(179)
+        font_size: 24
+        size_hint: 0.35, 1
+        #text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+    Label:
+        size_hint: 0, 1
+<FilamentBox>:
+    tools: 0
+<TempKeypad>:
+    title: ""
+    temp: ""
+    tempIn: tempIn
+
+    orientation: 'vertical'
+    size_hint_x: 0.375
+    pos_hint: {'x': 0.625}
+    spacing: 30
+
+    canvas.before:
+        Color:
+            rgb: 0, 0, 0
+        Line:
+            rectangle: self.x+1,self.y+1,self.width-1,self.height-1
+            width: 5
+        Color:
+            rgb: 0.3, 0.3, 0.3
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    Label:
+        text: root.title
+        font_size: 36
+        size_hint: 1, 0.15
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'center'
+        padding: 0, 15
+
+    Label:
+        id: tempIn
+        text: root.temp
+        font_size: 36
+        size_hint: 1, 0.15
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'right'
+        color: 0, 0, 0, 1
+
+        canvas.before:
+            Color:
+                rgb: 1, 1, 1
+            Rectangle:
+                pos: self.pos
+                size: self.size
+
+    GridLayout:
+        id: keypad
+        rows: 4
+        cols: 3
+        size_hint_y: 0.6
+        Button:
+            text: "7"
+            on_press: tempIn.text = tempIn.text + '7'
+        Button:
+            text: "8"
+            on_press: tempIn.text = tempIn.text + '8'
+        Button:
+            text: "9"
+            on_press: tempIn.text = tempIn.text + '9'
+
+        Button:
+            text: "4"
+            on_press: tempIn.text = tempIn.text + '4'
+        Button:
+            text: "5"
+            on_press: tempIn.text = tempIn.text + '5'
+        Button:
+            text: "6"
+            on_press: tempIn.text = tempIn.text + '6'
+
+        Button:
+            text: "1"
+            on_press: tempIn.text = tempIn.text + '1'
+        Button:
+            text: "2"
+            on_press: tempIn.text = tempIn.text + '2'
+        Button:
+            text: "3"
+            on_press: tempIn.text = tempIn.text + '3'
+
+        Button:
+            text: "Back"
+            on_press: tempIn.text = tempIn.text[:-1]
+        Button:
+            text: "0"
+            on_press: tempIn.text = tempIn.text + '0'
+        Button:
+            text: "Done"
+            on_release: root.remove()
+<SystemCommands>:
+    commands: None
+<FileView>:
+    f: None
+
+    orientation: 'vertical'
+    padding: 5, 10
+
+    canvas.before:
+        Color:
+            rgba: 0.4, 0.4, 0.4, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+        Color:
+            rgba: 0.5, 0.5, 0.5, 1
+        Line:
+            points: self.pos[0]+15, self.pos[1], self.pos[0]+self.width-15, self.pos[1]
+
+    Label:
+        text: get(root.f, ['name'], "")
+        font_size: 24
+        size_hint: 1, 0.6
+        text_size: self.width, None
+        size: self.texture_size[0], self.texture_size[1]
+        halign: 'center'
+    BoxLayout:
+        Label:
+            text: datetime.datetime.fromtimestamp(get(root.f, ['date'], 0)).strftime('%a, %b %-d, %Y')
+            font_size: 16
+            size_hint: 1, 0.4
+            text_size: self.width, None
+            size: self.texture_size[0], self.texture_size[1]
+            halign: 'left'
+        Label:
+            text: datetime.datetime.fromtimestamp(get(root.f, ['date'], 0)).strftime('%-I:%M:%S%p')
+            font_size: 16
+            size_hint: 1, 0.4
+            text_size: self.width, None
+            size: self.texture_size[0], self.texture_size[1]
+            halign: 'right'
+<FileList>:
+    files: []
+    selected: {}
+
+<StatusTab@BoxLayout>:
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: get(app.client.state, ['text'], "Offline")
+            halign: 'center'
+            font_size: 48
+            text_size: root.width, 60
+            size: self.texture_size
+            size_hint: 1, None
+        Label:
+            text: get(app.client.job, ['file', 'name'], " No File Selected")
+            halign: 'center'
+            font_size: 24
+            text_size: root.width, 40
+            size: self.texture_size
+            size_hint: 1, None
+        BoxLayout:
+            padding: 10
+
+            TemperatureBox:
+                orientation: 'vertical'
+                bed: get(app.client.profile, ['heatedBed'], False)
+                tools: get(app.client.profile, ['extruder', 'count'], 0)
+
+
+            FilamentBox:
+                orientation: 'vertical'
+                tools: get(app.client.profile, ['extruder', 'count'], 0)
+
+        BoxLayout:
+            #orientation: 'vertical'
+            size: self.width, 70
+            size_hint: 1, None
+            TimeLabel:
+                time: time(get(app.client.progress, ['printTime'], 0))
+                title: "Printed"
+            TimeLabel:
+                time: time(get(app.client.progress, ['printTimeLeft'], 0))
+                title: "Remaining"
+            TimeLabel:
+                time: time(get(app.client.job, ['lastPrintTime'], 0) if get(app.client.job, ['lastPrintTime'], None) != None else get(app.client.job, ['estimatedPrintTime'], 0))
+                title: "Total"
+        ProgressBar:
+            max: 100
+            value: get(app.client.progress, ['completion'], 0)
+            padding: 5
+            size: self.width, 30
+            size_hint: 1, None
+        BoxLayout:
+            size_hint: 1, None
+            size: self.width, 40
+            size_hint: 1, None
+            size: self.width, 40
+            Button:
+                text: "Restart" if get(app.client.state, ['flags', 'paused'], False) else "Print"
+                id: print_button
+                disabled: get(app.client.state, ['flags', 'printing'], False) or get(app.client.job, ['file', 'name'], None) == None
+                on_press: app.client.sendCommand('/api/job', 'restart' if get(app.client.state, ['flags', 'paused'], False) else 'start')
+            Button:
+                text: "Resume" if get(app.client.state, ['flags', 'paused'], False) else "Pause"
+                id: pause_button
+                disabled: not get(app.client.state, ['flags', 'printing'], False) and not get(app.client.state, ['flags', 'paused'], False)
+                on_press: app.client.sendCommand('/api/job', 'pause', {'action': 'toggle'})
+            Button:
+                text: "Cancel"
+                id: cancel_button
+                disabled: not get(app.client.state, ['flags', 'printing'], False) and not get(app.client.state, ['flags', 'paused'], False)
+                on_press: app.client.sendCommand('/api/job', 'cancel')
+                background_color: 2, .5, .5, 1
+
+<PrinterTab@FloatLayout>:
+
+    estep: 5
+    zstep: 10
+    xystep: 10
+
+    BoxLayout:
+        BoxLayout:
+            orientation: 'vertical'
+
+            TemperatureBox:
+                orientation: 'vertical'
+                buttons: True
+                bed: get(app.client.profile, ['heatedBed'], False)
+                tools: get(app.client.profile, ['extruder', 'count'], 0)
+                padding: 5
+                spacing: 5
+                size_hint_y: 0.4
+
+            BoxLayout:
+                size_hint_y: 0.05
+
+            BoxLayout:
+                size_hint_y: 0.05
+
+            BoxLayout:
+                size_hint_y: 0.2
+                orientation: 'vertical'
+                BoxLayout:
+                    spacing: 2
+                    padding: 5
+                    ToggleButton:
+                        id: e_5
+                        text: "5"
+                        group: "estep"
+                        allow_no_selection: False
+                        on_press: root.estep = 5
+                        state: 'down'
+                    ToggleButton:
+                        id: e_10
+                        text: "10"
+                        group: "estep"
+                        allow_no_selection: False
+                        on_press: root.estep = 10
+                    ToggleButton:
+                        id: e_50
+                        text: "50"
+                        group: "estep"
+                        allow_no_selection: False
+                        on_press: root.estep = 50
+                    ToggleButton:
+                        id: e_100
+                        text: "100"
+                        group: "estep"
+                        allow_no_selection: False
+                        on_press: root.estep = 100
+
+                BoxLayout:
+                    spacing: 2
+                    padding: 5, 0
+                    Button:
+                        id: e_plus
+                        text: "Extrude"
+                        on_press: app.client.sendCommand('/api/printer/tool', 'extrude', {'amount': root.estep})
+                    Button:
+                        id: e_minus
+                        text: "Retract"
+                        on_press: app.client.sendCommand('/api/printer/tool', 'extrude', {'amount': -1*root.estep})
+
+            BoxLayout:
+                size_hint_y: 0.05
+
+            BoxLayout:
+                size_hint_y: 0.1
+                spacing: 2
+                padding: 5, 0
+                Button:
+                    text: "Motors On"
+                    on_press: app.client.sendCommand('/api/printer/command', 'M17')
+                Button:
+                    text: "Motors Off"
+                    on_press: app.client.sendCommand('/api/printer/command', 'M18')
+
+            BoxLayout:
+                size_hint_y: 0.05
+
+        GridLayout:
+            cols: 2
+            rows: 2
+
+            BoxLayout:
+                orientation: 'vertical'
+
+                size_hint_x: None
+                width: 40
+
+                ToggleButton:
+                    id: z_100
+                    text: "100"
+                    group: "zstep"
+                    allow_no_selection: False
+                    on_press: root.zstep = 100
+                ToggleButton:
+                    id: z_10
+                    text: "10"
+                    group: "zstep"
+                    allow_no_selection: False
+                    on_press: root.zstep = 10
+                    state: 'down'
+                ToggleButton:
+                    id: z_1
+                    text: "1"
+                    group: "zstep"
+                    allow_no_selection: False
+                    on_press: root.zstep = 1
+                ToggleButton:
+                    id: z_0.1
+                    text: "0.1"
+                    group: "zstep"
+                    allow_no_selection: False
+                    on_press: root.zstep = 0.1
+
+            GridLayout:
+                cols: 3
+                rows: 3
+                spacing: 10
+                Button:
+                    id: z_home
+                    text: "Z Home"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'home', {'axes': ['z']})
+                Button:
+                    id: y_plus
+                    text: "Y+"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'y': root.xystep})
+                Button:
+                    id: z_up
+                    text: "Z+"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'z': root.zstep})
+
+                Button:
+                    id: x_minus
+                    text: "X-"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'x': -1*root.xystep})
+                Button:
+                    id: xy_home
+                    text: "Home XY"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'home', {'axes': ['x', 'y']})
+                Button:
+                    id: x_plus
+                    text: "X+"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'x': root.xystep})
+
+                Button:
+                    id: home
+                    text: "Home All"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'home', {'axes': ['x', 'y', 'z']})
+                Button:
+                    id: y_minus
+                    text: "Y-"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'y': -1*root.xystep})
+                Button:
+                    id: z_down
+                    text: "Z-"
+                    on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'z': -1*root.zstep})
+
+            BoxLayout:
+                size_hint_x: None
+                width: 40
+                size_hint_y: None
+                height: 40
+
+            BoxLayout:
+                size_hint_y: None
+                height: 40
+                ToggleButton:
+                    id: xy_0.1
+                    text: "0.1"
+                    group: "xystep"
+                    allow_no_selection: False
+                    on_press: root.xystep = 0.1
+                ToggleButton:
+                    id: xy_1
+                    text: "1"
+                    group: "xystep"
+                    allow_no_selection: False
+                    on_press: root.xystep = 1
+                ToggleButton:
+                    id: xy_10
+                    text: "10"
+                    group: "xystep"
+                    allow_no_selection: False
+                    on_press: root.xystep = 10
+                    state: 'down'
+                ToggleButton:
+                    id: xy_100
+                    text: "100"
+                    group: "xystep"
+                    allow_no_selection: False
+                    on_press: root.xystep = 100
+
+<SystemTab@BoxLayout>:
+    spacing: 10
+
+    port: get(app.client.connection, ['current', 'port'], "") if get(app.client.connection, ['current', 'port'], "") != "" else get(app.client.connection, ['options', 'portPreference'], "")
+    baudrate: get(app.client.connection, ['current', 'baudrate'], "") if get(app.client.connection, ['current', 'baudrate'], "") != "" else get(app.client.connection, ['options', 'baudratePreference'], "")
+    profile: get(app.client.connection, ['current', 'printerProfile'], "") if get(app.client.connection, ['current', 'printerProfile'], "") != "" else get(app.client.connection, ['options', 'printerProfilePreference'], "")
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "Connection:"
+            font_size: 36
+            size_hint: 1, None
+            text_size: self.width, None
+            size: self.texture_size[0], 50
+            halign: 'center'
+            padding: 0, 15
+
+        BoxLayout:
+            size_hint_y: None
+            height: 100
+            orientation: 'vertical'
+            Label:
+                text: "Serial Port"
+                font_size: 18
+                size_hint: 1, None
+                text_size: self.width, None
+                size: self.texture_size[0], self.texture_size[1]
+                halign: 'center'
+                padding: 0, 15
+            Spinner:
+                disabled: not get(app.client.state, ['flags', 'closedOrError'], True)
+                text: get(app.client.connection, ['current', 'port'], "") if get(app.client.connection, ['current', 'port'], "") != "" else get(app.client.connection, ['options', 'portPreference'], "")
+                on_text: root.port = self.text
+                values: ([get(app.client.connection, ['options', 'portPreference'], "")] if get(app.client.connection, ['options', 'portPreference'], "") != "" else []) + filter(lambda x: x != get(app.client.connection, ['options', 'portPreference'], ""), get(app.client.connection, ['options', 'ports'], []))
+        BoxLayout:
+            size_hint_y: None
+            height: 100
+            orientation: 'vertical'
+            Label:
+                text: "Baudrate"
+                font_size: 18
+                size_hint: 1, None
+                text_size: self.width, None
+                size: self.texture_size[0], self.texture_size[1]
+                halign: 'center'
+                padding: 0, 15
+            Spinner:
+                disabled: not get(app.client.state, ['flags', 'closedOrError'], True)
+                text: str(get(app.client.connection, ['current', 'baudrate'], "") if get(app.client.connection, ['current', 'baudrate'], "") != "" else get(app.client.connection, ['options', 'baudratePreference'], ""))
+                on_text: root.baudrate = self.text
+                values: ([str(get(app.client.connection, ['options', 'baudratePreference'], ""))] if str(get(app.client.connection, ['options', 'baudratePreference'], "")) != "" else []) + filter(lambda x: x != str(get(app.client.connection, ['options', 'baudratePreference'], "")), map(str, get(app.client.connection, ['options', 'baudrates'], [])))
+
+        BoxLayout:
+            size_hint_y: None
+            height: 100
+            orientation: 'vertical'
+            Label:
+                text: "Printer Profile"
+                font_size: 18
+                size_hint: 1, None
+                text_size: self.width, None
+                size: self.texture_size[0], self.texture_size[1]
+                halign: 'center'
+                padding: 0, 15
+            Spinner:
+                disabled: not get(app.client.state, ['flags', 'closedOrError'], True)
+                text: get(app.client.connection, ['current', 'printerProfile'], "") if get(app.client.connection, ['current', 'printerProfile'], "") != "" else get(app.client.connection, ['options', 'printerProfilePreference'], "")
+                on_text: root.profile = self.text
+                values: ([get(app.client.connection, ['options', 'printerProfilePreference'], "")] if str(get(app.client.connection, ['options', 'printerProfilePreference'], "")) != "" else []) + filter(lambda x: x != get(app.client.connection, ['options', 'printerProfilePreference'], ""), map(lambda x: x['id'], get(app.client.connection, ['options', 'printerProfiles'], [])))
+
+        BoxLayout:
+
+        Button:
+            size_hint_y: None
+            height: 50
+            text: "Connect" if get(app.client.state, ['flags', 'closedOrError'], True) else "Disconnect"
+            on_press: app.client.sendCommand('/api/connection', 'connect' if get(app.client.state, ['flags', 'closedOrError'], True) else 'disconnect', {'port': root.port, 'baudrate': int(root.baudrate), 'printerProfile': root.profile} if get(app.client.state, ['flags', 'closedOrError'], True) else None)
+
+
+    BoxLayout:
+        orientation: 'vertical'
+        Label:
+            text: "System Commands:"
+            font_size: 36
+            size_hint: 1, None
+            text_size: self.width, None
+            size: self.texture_size[0], 50
+            halign: 'center'
+            padding: 0, 15
+
+        Widget:
+            size_hint: 1, None
+            height: 45
+
+        SystemCommands:
+            commands: get(app.client.systemCommands, [], None)
+
+<FilesTab@BoxLayout>:
+    selected: {}
+    BoxLayout:
+        size_hint_x: 0.55
+        BoxLayout:
+            orientation: 'vertical'
+            Label:
+                text: get(root.selected, ['name'], '')
+                font_size: 36
+                size_hint: 1, None
+                text_size: self.width, None
+                size: self.texture_size[0], self.texture_size[1]
+                halign: 'center'
+                padding: 0, 15
+
+            BoxLayout:
+                size_hint_y: 0.2
+                padding: 10
+                Label:
+                    text: "" if get(root.selected, ['date'], 0) == 0 else datetime.datetime.fromtimestamp(get(root.selected, ['date'], 0)).strftime('%a, %b %-d, %Y')
+                    #text: "Date"
+                    font_size: 24
+                    size_hint: 0.6, 1
+                    text_size: self.width, None
+                    size: self.texture_size[0], self.texture_size[1]
+                    halign: 'left'
+                Label:
+                    text: "" if get(root.selected, ['date'], 0) == 0 else datetime.datetime.fromtimestamp(get(root.selected, ['date'], 0)).strftime('%-I:%M:%S%p')
+                    #text: "Time"
+                    font_size: 24
+                    size_hint: 0.4, 1
+                    text_size: self.width, None
+                    size: self.texture_size[0], self.texture_size[1]
+                    halign: 'right'
+
+            BoxLayout:
+                size_hint_y: 0.4
+                padding: 10
+                TimeLabel:
+                    size_hint_y: 0.4
+                    time: time(get(root.selected, ['gcodeAnalysis', 'estimatedPrintTime'], 0)) if root.selected != {} else ""
+                    title: "Estimated" if root.selected != {} else ""
+
+            BoxLayout:
+                size_hint_y: 0.05
+
+            #FilamentBox:
+            #    orientation: 'vertical'
+            #    tools: get(app.client.profile, ['extruder', 'count'], 0)
+            #    filament: app.client.job
+            #    size_hint_y: 0.5
+
+            BoxLayout:
+                size_hint_y: 0.25
+
+            BoxLayout:
+                size_hint: 1, None
+                size: self.width, 40
+                size_hint: 1, None
+                size: self.width, 40
+                Button:
+                    text: "Print"
+                    id: print_button
+                    #on_press: root.conf.plugin._printer.select_file(root.conf.plugin._file_manager.path_on_disk('local', root.title), False, printAfterSelect=True)
+                    on_press: app.client.sendCommand('/api/files/' + get(root.selected, ['origin'], "") + '/' + get(root.selected, ['path'], ""), 'select', {'print': 'true'})
+                    disabled: root.selected == {} or get(app.client.state, ['flags', 'printing'], False)
+                Button:
+                    text: "Load"
+                    id: load_button
+                    #on_press: root.conf.plugin._printer.select_file(root.conf.plugin._file_manager.path_on_disk('local', root.title), False)
+                    on_press: app.client.sendCommand('/api/files/' + get(root.selected, ['origin'], "") + '/' + get(root.selected, ['path'], ""), 'select')
+                    disabled: root.selected == {} or get(app.client.state, ['flags', 'printing'], False)
+                Button:
+                    text: "Delete"
+                    id: delete_button
+                    #on_press: root.conf.plugin._file_manager.remove_file('local', root.title)
+                    on_press: app.client.sendDelete('/api/files/' + get(root.selected, ['origin'], "") + '/' + get(root.selected, ['path'], ""))
+                    disabled: root.selected == {}
+                    background_color: 2, .5, .5, 1
+
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint_x: 0.45
+        Label:
+            text: "Files:"
+            font_size: 36
+            size_hint: 1, None
+            text_size: self.width, None
+            size: self.texture_size[0], self.texture_size[1]
+            halign: 'center'
+            padding: 0, 15
+        ScrollView:
+            size: self.size
+            do_scroll_x: False
+            FileList:
+                on_selected: root.selected = self.selected
+                files: get(app.client.files, ['files'], [])
+
+<OctoprintLcd>:
+
+    TabbedPanel:
+        pos_hint: {'center_x': .5, 'center_y': .5}
+        do_default_tab: False
+
+        TabbedPanelItem:
+            text: 'Status'
+            StatusTab:
+
+        TabbedPanelItem:
+            text: 'Printer'
+            PrinterTab:
+
+        TabbedPanelItem:
+            text: 'System'
+            SystemTab:
+
+        TabbedPanelItem:
+            text: "Files"
+            FilesTab:

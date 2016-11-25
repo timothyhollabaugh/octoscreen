@@ -13,9 +13,11 @@ from kivy.logger import Logger
 
 import pprint
 
-import json
+import json 
 
 class Client(EventDispatcher):
+
+    socket = None
 
     octoprintConnection = StringProperty('Connecting')
 
@@ -23,18 +25,18 @@ class Client(EventDispatcher):
     offsets = ListProperty([])
     busyFiles = ListProperty([])
     messages = ListProperty([])
-    state = ObjectProperty(None)
+    state = ObjectProperty(None, allownone=True)
     serverTime = NumericProperty(0)
-    temps = ObjectProperty(None)
-    temp = ObjectProperty(None)
-    job = ObjectProperty(None)
+    temps = ObjectProperty(None, allownone=True)
+    temp = ObjectProperty(None, allownone=True)
+    job = ObjectProperty(None, allownone=True)
     currentZ = NumericProperty(0)
-    progress = ObjectProperty(None)
-    systemCommands = ObjectProperty(None)
-    files = ObjectProperty(None)
+    progress = ObjectProperty(None, allownone=True)
+    systemCommands = ObjectProperty(None, allownone=True)
+    files = ObjectProperty(None, allownone=True)
 
-    profile = ObjectProperty(None)
-    profiles = ObjectProperty(None)
+    profile = ObjectProperty(None, allownone=True)
+    profiles = ObjectProperty(None, allownone=True)
 
     connection = ObjectProperty(None)
 
@@ -169,17 +171,53 @@ class Client(EventDispatcher):
         octoprint_client.delete(path, params)
 
     def on_octoprintConnection(self, inst, value):
-        if value == 'Closed':
+
+        #print(value)
+
+        state = value
+
+        if state == 'Errored':
+            #print("Real Errored")
             self.octoprintConnection = 'Reconnecting'
             Clock.schedule_once(self.connect, 1)
 
-    def init(self, *args):
-        Logger.info("Client: Getting Octoprint Settings")
-        settings = init_settings("/home/tim/.octoprint", "/home/tim/.octoprint/config.yaml")
-        octoprint_client.init_client(settings)
-        self.connect(args)
+        if state == 'Errored' or state == 'Closed':
+           #print("Closed or Errored")
+            self.logs = []
+            self.offesets = []
+            self.busyFiles = []
+            self.messages = []
+            self.state = None
+            self.serverTime = 0
+            self.temps = None
+            self.temp = None
+            self.job = None
+
+            self.progress = None
+            self.systemCommands = None
+            self.files = None
+            self.profiles = None
+            self.profile = None
+            self.connection = None
+
+
+    def init(self, host, port, apikey):
+        Logger.info("Client: Connecting to Octoprint")
+        Logger.debug("Client: Host: " + str(host))
+        Logger.debug("Client: Port: " + str(port))
+        Logger.debug("Client: API Key: " + str(apikey))
+
+        octoprint_client.apikey = apikey
+        octoprint_client.baseurl = octoprint_client.build_base_url(https=None, httpuser=None, httppass=None, host=host, port=port, prefix=None)
+
+        Clock.schedule_once(self.connect)
 
     def connect(self, *args):
+
+        if self.socket != None:
+            self.socket.disconnect()
+
+       #print(self.octoprintConnection)
 
         if self.octoprintConnection == 'Reconnecting':
             Logger.warning("Client: Could not connect to Octoprint")
@@ -188,20 +226,24 @@ class Client(EventDispatcher):
             Logger.info("Client: Connecting to Octoprint...")
 
         def on_connect(ws):
+           #print("Connected")
             self.octoprintConnection = 'Connected'
             self.loadAll()
 
         def on_close(ws):
-            self.octoprintConnection = 'Closed'
+            #print(self.octoprintConnection)
+            if self.octoprintConnection != 'Errored' and self.octoprintConnection != 'Reconnecting':
+                self.octoprintConnection = 'Closed'
 
         def on_error(ws, error):
-            pass
+            self.octoprintConnection = 'Errored'
+            #print("Error")
 
         def on_heartbeat(ws):
             pass
 
         def on_message(ws, mtype, mdata):
-
+           #print(mtype)
             if mtype == 'current' or mtype == 'history':
                 self.logs       = mdata['logs']
                 self.offsets    = mdata['offsets']
@@ -240,7 +282,12 @@ class Client(EventDispatcher):
                     self.loadTemps()
                     self.loadJob()
 
-        socket = octoprint_client.connect_socket(
+            if mtype == 'connected':
+               #print("Connected")
+                self.octoprintConnection = 'Connected'
+                self.loadAll()
+
+        self.socket = octoprint_client.connect_socket(
             on_connect=on_connect,
             on_close=on_close,
             on_error=on_error,

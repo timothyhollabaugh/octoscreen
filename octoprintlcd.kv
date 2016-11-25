@@ -1,8 +1,22 @@
 #:kivy 1.9.1
 #:import ToggleButtonBehavior kivy.uix.behaviors.ToggleButtonBehavior
+#:import window kivy.core.window.Window
+#:import icon kivy.garden.iconfonts.icon
 #:import datetime datetime
 #:import get utils.get
 #:import time utils.time
+ 
+<Widget>:
+    font_name: 'Ubuntu'
+
+<Button>
+    bold: True
+
+<OctoprintButton@Button>:
+    disabled: app.client.octoprintConnection != 'Connected'
+
+<OctoprintLabel@Label>:
+    color: [1, 1, 1, 0.5] if app.client.octoprintConnection != 'Connected' else [1, 1, 1, 1]
 
 <TimeLabel@BoxLayout>:
     time: ""
@@ -11,15 +25,16 @@
     spacing: 2
     orientation: 'vertical'
 
-    Label:
+    OctoprintLabel:
         text: root.title
+        bold: True
         font_size: 24
         size_hint: 1, None
         text_size: self.width, None
         size: self.texture_size[0], self.texture_size[1]
         halign: 'center'
 
-    Label:
+    OctoprintLabel:
         text: root.time
         font_size: 36
         size_hint: 1, None
@@ -38,6 +53,7 @@
 
     Label:
         text: root.title
+        bold: True
         font_size: 24
         size_hint: 0.3, 1
         text_size: self.width, self.texture_size[1]
@@ -76,6 +92,7 @@
 
     Label:
         text: root.title
+        bold: True
         font_size: 24
         size_hint: 0.4, 1
         #text_size: self.width, None
@@ -240,15 +257,15 @@
 <StatusTab@BoxLayout>:
     BoxLayout:
         orientation: 'vertical'
-        Label:
+        OctoprintLabel:
             text: get(app.client.state, ['text'], "Offline")
             halign: 'center'
             font_size: 48
             text_size: root.width, 60
             size: self.texture_size
             size_hint: 1, None
-        Label:
-            text: get(app.client.job, ['file', 'name'], " No File Selected")
+        OctoprintLabel:
+            text: get(app.client.job, ['file', 'name'], "No File")
             halign: 'center'
             font_size: 24
             text_size: root.width, 40
@@ -291,17 +308,17 @@
             size: self.width, 40
             size_hint: 1, None
             size: self.width, 40
-            Button:
+            OctoprintButton:
                 text: "Restart" if get(app.client.state, ['flags', 'paused'], False) else "Print"
                 id: print_button
                 disabled: get(app.client.state, ['flags', 'printing'], False) or get(app.client.job, ['file', 'name'], None) == None
                 on_press: app.client.sendCommand('/api/job', 'restart' if get(app.client.state, ['flags', 'paused'], False) else 'start')
-            Button:
+            OctoprintButton:
                 text: "Resume" if get(app.client.state, ['flags', 'paused'], False) else "Pause"
                 id: pause_button
                 disabled: not get(app.client.state, ['flags', 'printing'], False) and not get(app.client.state, ['flags', 'paused'], False)
                 on_press: app.client.sendCommand('/api/job', 'pause', {'action': 'toggle'})
-            Button:
+            OctoprintButton:
                 text: "Cancel"
                 id: cancel_button
                 disabled: not get(app.client.state, ['flags', 'printing'], False) and not get(app.client.state, ['flags', 'paused'], False)
@@ -345,6 +362,7 @@
                         group: "estep"
                         allow_no_selection: False
                         on_press: root.estep = 5
+                        disabled: app.client.octoprintConnection != 'Connected'
                         state: 'down'
                     ToggleButton:
                         id: e_10
@@ -352,27 +370,30 @@
                         group: "estep"
                         allow_no_selection: False
                         on_press: root.estep = 10
+                        disabled: app.client.octoprintConnection != 'Connected'
                     ToggleButton:
                         id: e_50
                         text: "50"
                         group: "estep"
                         allow_no_selection: False
                         on_press: root.estep = 50
+                        disabled: app.client.octoprintConnection != 'Connected'
                     ToggleButton:
                         id: e_100
                         text: "100"
                         group: "estep"
                         allow_no_selection: False
                         on_press: root.estep = 100
+                        disabled: app.client.octoprintConnection != 'Connected'
 
                 BoxLayout:
                     spacing: 2
                     padding: 5, 0
-                    Button:
+                    OctoprintButton:
                         id: e_plus
                         text: "Extrude"
                         on_press: app.client.sendCommand('/api/printer/tool', 'extrude', {'amount': root.estep})
-                    Button:
+                    OctoprintButton:
                         id: e_minus
                         text: "Retract"
                         on_press: app.client.sendCommand('/api/printer/tool', 'extrude', {'amount': -1*root.estep})
@@ -384,10 +405,10 @@
                 size_hint_y: 0.1
                 spacing: 2
                 padding: 5, 0
-                Button:
+                OctoprintButton:
                     text: "Motors On"
                     on_press: app.client.sendCommand('/api/printer/command', 'M17')
-                Button:
+                OctoprintButton:
                     text: "Motors Off"
                     on_press: app.client.sendCommand('/api/printer/command', 'M18')
 
@@ -410,6 +431,7 @@
                     group: "zstep"
                     allow_no_selection: False
                     on_press: root.zstep = 100
+                    disabled: app.client.octoprintConnection != 'Connected'
                 ToggleButton:
                     id: z_10
                     text: "10"
@@ -417,58 +439,61 @@
                     allow_no_selection: False
                     on_press: root.zstep = 10
                     state: 'down'
+                    disabled: app.client.octoprintConnection != 'Connected'
                 ToggleButton:
                     id: z_1
                     text: "1"
                     group: "zstep"
                     allow_no_selection: False
                     on_press: root.zstep = 1
+                    disabled: app.client.octoprintConnection != 'Connected'
                 ToggleButton:
                     id: z_0.1
                     text: "0.1"
                     group: "zstep"
                     allow_no_selection: False
                     on_press: root.zstep = 0.1
+                    disabled: app.client.octoprintConnection != 'Connected'
 
             GridLayout:
                 cols: 3
                 rows: 3
                 spacing: 10
-                Button:
+                OctoprintButton:
                     id: z_home
                     text: "Z Home"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'home', {'axes': ['z']})
-                Button:
+                OctoprintButton:
                     id: y_plus
                     text: "Y+"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'y': root.xystep})
-                Button:
+                OctoprintButton:
                     id: z_up
                     text: "Z+"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'z': root.zstep})
 
-                Button:
+                OctoprintButton:
                     id: x_minus
                     text: "X-"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'x': -1*root.xystep})
-                Button:
+                OctoprintButton:
                     id: xy_home
                     text: "Home XY"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'home', {'axes': ['x', 'y']})
-                Button:
+                OctoprintButton:
                     id: x_plus
                     text: "X+"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'x': root.xystep})
 
-                Button:
+                OctoprintButton:
                     id: home
                     text: "Home All"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'home', {'axes': ['x', 'y', 'z']})
-                Button:
+                OctoprintButton:
                     id: y_minus
                     text: "Y-"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'y': -1*root.xystep})
-                Button:
+                OctoprintButton:
                     id: z_down
                     text: "Z-"
                     on_press: app.client.sendCommand('/api/printer/printhead', 'jog', {'z': -1*root.zstep})
@@ -488,18 +513,21 @@
                     group: "xystep"
                     allow_no_selection: False
                     on_press: root.xystep = 0.1
+                    disabled: app.client.octoprintConnection != 'Connected'
                 ToggleButton:
                     id: xy_1
                     text: "1"
                     group: "xystep"
                     allow_no_selection: False
                     on_press: root.xystep = 1
+                    disabled: app.client.octoprintConnection != 'Connected'
                 ToggleButton:
                     id: xy_10
                     text: "10"
                     group: "xystep"
                     allow_no_selection: False
                     on_press: root.xystep = 10
+                    disabled: app.client.octoprintConnection != 'Connected'
                     state: 'down'
                 ToggleButton:
                     id: xy_100
@@ -507,6 +535,7 @@
                     group: "xystep"
                     allow_no_selection: False
                     on_press: root.xystep = 100
+                    disabled: app.client.octoprintConnection != 'Connected'
 
 <SystemTab@BoxLayout>:
     spacing: 10
@@ -517,7 +546,7 @@
 
     BoxLayout:
         orientation: 'vertical'
-        Label:
+        OctoprintLabel:
             text: "Connection:"
             font_size: 36
             size_hint: 1, None
@@ -530,7 +559,7 @@
             size_hint_y: None
             height: 100
             orientation: 'vertical'
-            Label:
+            OctoprintLabel:
                 text: "Serial Port"
                 font_size: 18
                 size_hint: 1, None
@@ -539,7 +568,7 @@
                 halign: 'center'
                 padding: 0, 15
             Spinner:
-                disabled: not get(app.client.state, ['flags', 'closedOrError'], True)
+                disabled: not get(app.client.state, ['flags', 'closedOrError'], True) or app.client.octoprintConnection != 'Connected'
                 text: get(app.client.connection, ['current', 'port'], "") if get(app.client.connection, ['current', 'port'], "") != "" else get(app.client.connection, ['options', 'portPreference'], "")
                 on_text: root.port = self.text
                 values: ([get(app.client.connection, ['options', 'portPreference'], "")] if get(app.client.connection, ['options', 'portPreference'], "") != "" else []) + filter(lambda x: x != get(app.client.connection, ['options', 'portPreference'], ""), get(app.client.connection, ['options', 'ports'], []))
@@ -547,7 +576,7 @@
             size_hint_y: None
             height: 100
             orientation: 'vertical'
-            Label:
+            OctoprintLabel:
                 text: "Baudrate"
                 font_size: 18
                 size_hint: 1, None
@@ -556,7 +585,7 @@
                 halign: 'center'
                 padding: 0, 15
             Spinner:
-                disabled: not get(app.client.state, ['flags', 'closedOrError'], True)
+                disabled: not get(app.client.state, ['flags', 'closedOrError'], True) or app.client.octoprintConnection != 'Connected'
                 text: str(get(app.client.connection, ['current', 'baudrate'], "") if get(app.client.connection, ['current', 'baudrate'], "") != "" else get(app.client.connection, ['options', 'baudratePreference'], ""))
                 on_text: root.baudrate = self.text
                 values: ([str(get(app.client.connection, ['options', 'baudratePreference'], ""))] if str(get(app.client.connection, ['options', 'baudratePreference'], "")) != "" else []) + filter(lambda x: x != str(get(app.client.connection, ['options', 'baudratePreference'], "")), map(str, get(app.client.connection, ['options', 'baudrates'], [])))
@@ -565,7 +594,7 @@
             size_hint_y: None
             height: 100
             orientation: 'vertical'
-            Label:
+            OctoprintLabel:
                 text: "Printer Profile"
                 font_size: 18
                 size_hint: 1, None
@@ -574,14 +603,14 @@
                 halign: 'center'
                 padding: 0, 15
             Spinner:
-                disabled: not get(app.client.state, ['flags', 'closedOrError'], True)
+                disabled: not get(app.client.state, ['flags', 'closedOrError'], True) or app.client.octoprintConnection != 'Connected'
                 text: get(app.client.connection, ['current', 'printerProfile'], "") if get(app.client.connection, ['current', 'printerProfile'], "") != "" else get(app.client.connection, ['options', 'printerProfilePreference'], "")
                 on_text: root.profile = self.text
                 values: ([get(app.client.connection, ['options', 'printerProfilePreference'], "")] if str(get(app.client.connection, ['options', 'printerProfilePreference'], "")) != "" else []) + filter(lambda x: x != get(app.client.connection, ['options', 'printerProfilePreference'], ""), map(lambda x: x['id'], get(app.client.connection, ['options', 'printerProfiles'], [])))
 
         BoxLayout:
 
-        Button:
+        OctoprintButton:
             size_hint_y: None
             height: 50
             text: "Connect" if get(app.client.state, ['flags', 'closedOrError'], True) else "Disconnect"
@@ -590,7 +619,7 @@
 
     BoxLayout:
         orientation: 'vertical'
-        Label:
+        OctoprintLabel:
             text: "System Commands:"
             font_size: 36
             size_hint: 1, None
@@ -666,19 +695,19 @@
                 size: self.width, 40
                 size_hint: 1, None
                 size: self.width, 40
-                Button:
+                OctoprintButton:
                     text: "Print"
                     id: print_button
                     #on_press: root.conf.plugin._printer.select_file(root.conf.plugin._file_manager.path_on_disk('local', root.title), False, printAfterSelect=True)
                     on_press: app.client.sendCommand('/api/files/' + get(root.selected, ['origin'], "") + '/' + get(root.selected, ['path'], ""), 'select', {'print': 'true'})
                     disabled: root.selected == {} or get(app.client.state, ['flags', 'printing'], False)
-                Button:
+                OctoprintButton:
                     text: "Load"
                     id: load_button
                     #on_press: root.conf.plugin._printer.select_file(root.conf.plugin._file_manager.path_on_disk('local', root.title), False)
                     on_press: app.client.sendCommand('/api/files/' + get(root.selected, ['origin'], "") + '/' + get(root.selected, ['path'], ""), 'select')
                     disabled: root.selected == {} or get(app.client.state, ['flags', 'printing'], False)
-                Button:
+                OctoprintButton:
                     text: "Delete"
                     id: delete_button
                     #on_press: root.conf.plugin._file_manager.remove_file('local', root.title)
@@ -689,7 +718,7 @@
     BoxLayout:
         orientation: 'vertical'
         size_hint_x: 0.45
-        Label:
+        OctoprintLabel:
             text: "Files:"
             font_size: 36
             size_hint: 1, None
@@ -712,16 +741,29 @@
 
         TabbedPanelItem:
             text: 'Status'
+            bold: True
             StatusTab:
 
         TabbedPanelItem:
             text: 'Printer'
+            bold: True
             PrinterTab:
 
         TabbedPanelItem:
             text: 'System'
+            bold: True
             SystemTab:
 
         TabbedPanelItem:
             text: "Files"
+            bold: True
             FilesTab:
+
+    Button:
+        size_hint: None, None
+        size: 41, 41
+        font_size: 20
+        markup: True
+        text: "%s"%(icon('fa-cog'))
+        pos: 405, window.height - self.size[1] - 3
+        on_press: app.open_settings()

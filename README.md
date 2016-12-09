@@ -77,6 +77,11 @@ git clone https://github.com/chickenchuck040/octoscreen.git
 cd octoscreen
 ```
 
+You will need to change the `PATH_BASE` variable at the top of `main.py` to point to the full path of Octoscreen's installation directory.
+```
+nano main.py
+```
+
 Run it with
 ```
 python main.py

@@ -1,4 +1,5 @@
 
+# Edit this to be the directory that this file is in!
 PATH_BASE = '/etc/octoprint/octoscreen'
 
 import os

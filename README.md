@@ -21,6 +21,9 @@ Features
   - Time remaining in print
   - Total time of print
   - Start, stop, or cancel prints
+  
+  ![Status Picture](https://raw.githubusercontent.com/chickenchuck040/octoscreen/master/screenshots/status_printing.png)
+  
  - Control of the printer, including:
   - Temperatures with a nice on screen keypad
   - Tool selection
@@ -28,6 +31,9 @@ Features
   - Motors on/off
   - Jog with different step sizes
   - Home XY, Z, or XYZ
+  
+  ![Printer Picture](https://raw.githubusercontent.com/chickenchuck040/octoscreen/master/screenshots/printer.png)
+  
  - Connection and other miscellaneous controls, including:
   - Serial port, baud rate, and profile selection for connecting
   - Any commands configued in the System menu. It uses breaks to seperate the buttons on different lines.
@@ -35,10 +41,15 @@ Features
   - Shows files in date order, newest at the top
   - Shows date uploaded and estimated time
   - Allows printing, selecting, or deleting a file
+  
+  ![Files Picture](https://raw.githubusercontent.com/chickenchuck040/octoscreen/master/screenshots/files.png)
+  
  - Adjusts displayed information to match printer profile:
   - Number of extruders
   - Heated Bed temperatures
  - Settings menu to configure Octoprint URL, Port, and API Key, and other Kivy settings
+ 
+  ![Settings Picture](https://raw.githubusercontent.com/chickenchuck040/octoscreen/master/screenshots/settings.png)
 
 Upcoming Features
 ===

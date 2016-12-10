@@ -1,8 +1,7 @@
 Octoscreen
 ===
 
-Octoscren is a touchscreen interface for [Octoprint](https://github.com/foosel/OctoPrint), designed for the official [Raspberry Pi Touchscreen](https://www.raspberrypi.org/products/raspberry-pi-touch-display/). It is currently in a very useable state, but is still under developemen
-t.
+Octoscren is a touchscreen interface for [Octoprint](https://github.com/foosel/OctoPrint), designed for the official [Raspberry Pi Touchscreen](https://www.raspberrypi.org/products/raspberry-pi-touch-display/). It is currently in a very useable state, but is still under developement.
 
 This uses a websocket and REST API to talk to Octoprint. It uses the [octoprint_client](https://github.com/foosel/OctoPrint/tree/master/src/octoprint_client) module that comes with Octoprint to handle the websocket and REST API. It currently requires Octoprint to be installed, but it may connect to an Octoprint on another system.
 

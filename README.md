@@ -7,6 +7,12 @@ This uses a websocket and REST API to talk to Octoprint. It uses the [octoprint_
 
 Octoscren uses [Kivy](http://kivy.org/#home) to draw to the screen and handle input. Kivy provides a nice way to do GPU accelerated graphics, while still remaining portable to other systems.
 
+Octoscreen is designed for the Raspberry Pi Touchscreen, however it should work anywhere Kivy is supported. If using a screen of a different size, you should change the `height` and `width` config options in `main.py`.
+```
+Config.set('graphics', 'height', '480')
+Config.set('graphics', 'width', '800')
+```
+
 Features
 ===
 **Stable, fully functioning features**

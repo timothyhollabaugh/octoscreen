@@ -74,7 +74,10 @@ First, make sure that [Octoprint](https://github.com/foosel/OctoPrint) is instal
 Install [Kivy](http://kivy.org/#home)
 Use the instructions [here](https://kivy.org/docs/installation/installation-rpi.html) for installation on a Raspberry Pi.
 
----
+Install the `websocket-client` module
+```
+pip install --user websocket-client
+```
 
 Make sure that the correct `python` is being run if Octoprint is in a virtual environment (ie OctoPi)
 ```

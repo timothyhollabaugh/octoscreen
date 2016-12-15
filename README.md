@@ -7,6 +7,12 @@ This uses a websocket and REST API to talk to Octoprint. It uses the [octoprint_
 
 Octoscren uses [Kivy](http://kivy.org/#home) to draw to the screen and handle input. Kivy provides a nice way to do GPU accelerated graphics, while still remaining portable to other systems.
 
+Octoscreen is designed for the Raspberry Pi Touchscreen, however it should work anywhere Kivy is supported. If using a screen of a different size, you should change the `height` and `width` config options in `main.py`.
+```
+Config.set('graphics', 'height', '480')
+Config.set('graphics', 'width', '800')
+```
+
 Features
 ===
 **Stable, fully functioning features**
@@ -68,17 +74,15 @@ First, make sure that [Octoprint](https://github.com/foosel/OctoPrint) is instal
 Install [Kivy](http://kivy.org/#home)
 Use the instructions [here](https://kivy.org/docs/installation/installation-rpi.html) for installation on a Raspberry Pi.
 
----
+Install the `websocket-client` module
+```
+pip install --user websocket-client
+```
 
 Make sure that the correct `python` is being run if Octoprint is in a virtual environment (ie OctoPi)
 ```
 git clone https://github.com/chickenchuck040/octoscreen.git
 cd octoscreen
-```
-
-You will need to change the `PATH_BASE` variable at the top of `main.py` to point to the full path of Octoscreen's installation directory.
-```
-nano main.py
 ```
 
 Run it with

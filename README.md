@@ -58,13 +58,7 @@ Features
 
 Upcoming Features
 ===
-**Features to maybe get into a future commit**
-
- - Settings in Octoprint settings manager
- - Custom buttons
- - Terminal tab
- - Gcode viewer
- - Slicer tab
+See [TODO](TODO.md)
 
 Installation
 ===

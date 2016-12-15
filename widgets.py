@@ -295,7 +295,7 @@ class FilamentBox(BoxLayout):
                 if length < 2:
                     i.length = ''
                 else:
-                    i.length = str(round(length/100, 2))
+                    i.length = str(round(length/1000, 2))
 
                 volume = utils.get(newjob, ['filament', i.name, 'volume'], 0)
                 if volume < 2:

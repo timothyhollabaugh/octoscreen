@@ -1,10 +1,14 @@
-
-# Edit this to be the directory that this file is in!
-PATH_BASE = '/etc/octoprint/octoscreen'
-
 import os
 os.environ["KIVY_NO_ARGS"] = "1"
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
+
+PATH_BASE = os.path.join(os.getcwd(), os.path.dirname(__file__))
+
+#print os.getcwd()
+#print __file__
+#print("PATH_BASE: ")
+#print(PATH_BASE)
+#print(os.path.join(PATH_BASE, 'data/fonts/Ubuntu-R.ttf'))
 
 import kivy
 kivy.require('1.9.1') # replace with your current kivy version !
@@ -35,12 +39,12 @@ VKeyboard.key_background_color = [0.2, 0.2, 0.2, 1]
 VKeyboard.margin_hint = [0, 0, 0, 0]
 
 LabelBase.register(name="Ubuntu",
-                   fn_regular    = PATH_BASE + '/data/fonts/Ubuntu-R.ttf',
-                   fn_bold       = PATH_BASE + '/data/fonts/Ubuntu-B.ttf',
-                   fn_italic     = PATH_BASE + '/data/fonts/Ubuntu-RI.ttf',
-                   fn_bolditalic = PATH_BASE + '/data/fonts/Ubuntu-BI.ttf')
+                   fn_regular    = os.path.join(PATH_BASE, 'data/fonts/Ubuntu-R.ttf'),
+                   fn_bold       = os.path.join(PATH_BASE, 'data/fonts/Ubuntu-B.ttf'),
+                   fn_italic     = os.path.join(PATH_BASE, 'data/fonts/Ubuntu-RI.ttf'),
+                   fn_bolditalic = os.path.join(PATH_BASE, 'data/fonts/Ubuntu-BI.ttf'))
 
-iconfonts.register('default_font', PATH_BASE + '/data/fonts/font-awesome.ttf', PATH_BASE + '/data/fonts/font-awesome.fontd')
+iconfonts.register('default_font', os.path.join(PATH_BASE, 'data/fonts/font-awesome.ttf'), os.path.join(PATH_BASE, 'data/fonts/font-awesome.fontd'))
 
 settingsjson = '''
 [

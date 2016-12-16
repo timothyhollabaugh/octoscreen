@@ -69,5 +69,12 @@ mtdev_%(name)s = probesysfs,provider=mtdev
 hid_%(name)s = probesysfs,provider=hidinput
 ```
 
-
+Run Octoscreen again
+```
+cd ~/octoscreen
+python main.py
+```
+Everything should work now. 
+Hit the gear button at the top and change the API key for your Octoprint, as well as the address and port if needed.
+An address of `127.0.0.1` will connect to a local Octoprint, and a port of `5000` is the default Octoprint port.
 

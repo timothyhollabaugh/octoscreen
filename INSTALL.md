@@ -39,6 +39,23 @@ Install Kivy
 ```
 pip install git+https://github.com/kivy/kivy.git@master
 ```
+Install Octoscreen
+```
+cd ~
+pip install websocket-client
+git clone https://github.com/chickenchuck040/octoscreen
+```
+
+Run Octoscreen for the first time
+```
+cd ~/octoscreen
+python main.py
+```
+Touch does not work at this point.
+Install the touch driver
+```
+sudo apt-get install libmtdev1
+```
 
 Open `~/.kivy/config.ini`
 ```
@@ -51,20 +68,6 @@ mouse = mouse
 mtdev_%(name)s = probesysfs,provider=mtdev
 hid_%(name)s = probesysfs,provider=hidinput
 ```
-Install the touch driver
-```
-sudo apt-get install libmtdev1
-```
 
-Install Octoscreen
-```
-cd ~
-pip install websocket-client
-git clone https://github.com/chickenchuck040/octoscreen
-```
 
-Run Octoscreen
-```
-cd ~/octoscreen
-python main.py
-```
+

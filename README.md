@@ -63,25 +63,6 @@ See [TODO](TODO.md)
 Installation
 ===
 
-First, make sure that [Octoprint](https://github.com/foosel/OctoPrint) is installed
-
-Install [Kivy](http://kivy.org/#home)
-Use the instructions [here](https://kivy.org/docs/installation/installation-rpi.html) for installation on a Raspberry Pi.
-
-Install the `websocket-client` module
-```
-pip install --user websocket-client
-```
-
-Make sure that the correct `python` is being run if Octoprint is in a virtual environment (ie OctoPi)
-```
-git clone https://github.com/chickenchuck040/octoscreen.git
-cd octoscreen
-```
-
-Run it with
-```
-python main.py
-```
+See [INSTALL](INSTALL.md)
 
 It would be wise to write a systemd service file to start it on boot.

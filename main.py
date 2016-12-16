@@ -33,10 +33,14 @@ from client import Client
 Config.set('graphics', 'height', '480')
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'borderless', '0')
+Config.set('kivy', 'keyboard_mode', 'systemanddock')
 Config.write()
+
+print(kivy.kivy_base_dir)
 
 VKeyboard.key_background_color = [0.2, 0.2, 0.2, 1]
 VKeyboard.margin_hint = [0, 0, 0, 0]
+VKeyboard.layout_path = os.path.join(PATH_BASE, 'keyboards')
 
 LabelBase.register(name="Ubuntu",
                    fn_regular    = os.path.join(PATH_BASE, 'data/fonts/Ubuntu-R.ttf'),

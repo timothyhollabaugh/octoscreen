@@ -69,6 +69,10 @@ mtdev_%(name)s = probesysfs,provider=mtdev
 hid_%(name)s = probesysfs,provider=hidinput
 ```
 
+And add this line to the `[kivy]` section
+```
+keyboard_mode = systemanddock
+```
 Run Octoscreen again
 ```
 cd ~/octoscreen

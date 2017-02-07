@@ -258,7 +258,7 @@
     BoxLayout:
         orientation: 'vertical'
         OctoprintLabel:
-            text: get(app.client.state, ['text'], "Offline")
+            text: get(app.client.state, ['text'], "Offline") if not get(app.client.state, ['flags', 'closedOrError'], False) else "Errored!"
             halign: 'center'
             font_size: 48
             text_size: root.width, 60

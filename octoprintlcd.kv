@@ -289,17 +289,17 @@
             size: self.width, 70
             size_hint: 1, None
             TimeLabel:
-                time: time(get(app.client.progress, ['printTime'], 0))
+                time: time(get(app.client.progress, ['printTime'], 0) if get(app.client.state, ['flags', 'printing'], False) or get(app.client.state, ['flags', 'paused'], False) else 0)
                 title: "Printed"
             TimeLabel:
-                time: time(get(app.client.progress, ['printTimeLeft'], 0))
+                time: time(get(app.client.progress, ['printTimeLeft'], 0) if get(app.client.state, ['flags', 'printing'], False) or get(app.client.state, ['flags', 'paused'], False) else 0)
                 title: "Remaining"
             TimeLabel:
                 time: time(get(app.client.job, ['lastPrintTime'], 0) if get(app.client.job, ['lastPrintTime'], None) != None else get(app.client.job, ['estimatedPrintTime'], 0))
                 title: "Total"
         ProgressBar:
             max: 100
-            value: get(app.client.progress, ['completion'], 0)
+            value: get(app.client.progress, ['completion'], 0) if get(app.client.state, ['flags', 'printing'], False) or get(app.client.state, ['flags', 'paused'], False) else 0
             padding: 5
             size: self.width, 30
             size_hint: 1, None

@@ -58,11 +58,11 @@ Features
 
 Upcoming Features
 ===
-See [TODO](TODO.md)
+See [TODO](https://github.com/chickenchuck040/octoscreen/wiki/To-Do)
 
 Installation
 ===
 
-See [INSTALL](INSTALL.md)
+See [INSTALL](https://github.com/chickenchuck040/octoscreen/wiki/Installation)
 
 It would be wise to write a systemd service file to start it on boot.

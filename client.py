@@ -18,6 +18,7 @@ import json
 class Client(EventDispatcher):
 
     socket = None
+    octoprintClient = None
 
     octoprintConnection = StringProperty('Connecting')
 
@@ -42,7 +43,7 @@ class Client(EventDispatcher):
 
     def loadProfiles(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/printerprofiles")
+            response = self.octoprintClient.get("/api/printerprofiles")
 
             if response.status_code == 200:
                 data = response.json()['profiles']
@@ -58,7 +59,7 @@ class Client(EventDispatcher):
 
     def loadConnection(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/connection")
+            response = self.octoprintClient.get("/api/connection")
 
             if response.status_code == 200:
                 data = response.json()
@@ -70,7 +71,7 @@ class Client(EventDispatcher):
 
     def loadTemps(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/printer?exclude=state,sd")
+            response = self.octoprintClient.get("/api/printer?exclude=state,sd")
 
             if response.status_code == 200:
                 data = response.json()['temperature']
@@ -85,7 +86,7 @@ class Client(EventDispatcher):
 
     def loadState(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/printer?exclude=temperature,sd")
+            response = self.octoprintClient.get("/api/printer?exclude=temperature,sd")
 
             if response.status_code == 200:
                 data = response.json()['state']
@@ -97,7 +98,7 @@ class Client(EventDispatcher):
 
     def loadJob(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/job")
+            response = self.octoprintClient.get("/api/job")
 
             if response.status_code == 200:
                 data = response.json()['job']
@@ -109,7 +110,7 @@ class Client(EventDispatcher):
 
     def loadProgress(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/job")
+            response = self.octoprintClient.get("/api/job")
 
             if response.status_code == 200:
                 data = response.json()['progress']
@@ -121,7 +122,7 @@ class Client(EventDispatcher):
 
     def loadSystemCommands(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/system/commands")
+            response = self.octoprintClient.get("/api/system/commands")
 
             if response.status_code == 200:
                 data = response.json()
@@ -133,7 +134,7 @@ class Client(EventDispatcher):
 
     def loadFiles(self, data = None):
         if data == None:
-            response = octoprint_client.get("/api/files")
+            response = self.octoprintClient.get("/api/files")
 
             if response.status_code == 200:
                 data = response.json()
@@ -147,13 +148,13 @@ class Client(EventDispatcher):
         self.loadProfiles()
         self.loadConnection()
 
-        response = octoprint_client.get("/api/printer")
+        response = self.octoprintClient.get("/api/printer")
         if response.status_code == 200:
             data = response.json()
             self.loadTemps(data['temperature'])
             self.loadState(data['state'])
 
-        response = octoprint_client.get("/api/job")
+        response = self.octoprintClient.get("/api/job")
         if response.status_code == 200:
             data = response.json()
             self.loadJob(data['job'])
@@ -165,10 +166,10 @@ class Client(EventDispatcher):
         self.dispatch()
 
     def sendCommand(self, path, command, data=None):
-        octoprint_client.post_command(path, command, data)
+        self.octoprintClient.post_command(path, command, data)
 
     def sendDelete(self, path, params=None):
-        octoprint_client.delete(path, params)
+        self.octoprintClient.delete(path, params)
 
     def on_octoprintConnection(self, inst, value):
 
@@ -207,8 +208,10 @@ class Client(EventDispatcher):
         Logger.debug("Client: Port: " + str(port))
         Logger.debug("Client: API Key: " + str(apikey))
 
-        octoprint_client.apikey = apikey
-        octoprint_client.baseurl = octoprint_client.build_base_url(https=None, httpuser=None, httppass=None, host=host, port=port, prefix=None)
+        self.octoprintClient = octoprint_client.Client(octoprint_client.build_base_url(https=None, httpuser=None, httppass=None, host=host, port=port, prefix=None), apikey)
+
+        #self.octoprintClient.apikey = apikey
+        #self.octoprintClient.baseurl = self.octoprintClient.build_base_url(https=None, httpuser=None, httppass=None, host=host, port=port, prefix=None)
 
         Clock.schedule_once(self.connect)
 
@@ -287,7 +290,7 @@ class Client(EventDispatcher):
                 self.octoprintConnection = 'Connected'
                 self.loadAll()
 
-        self.socket = octoprint_client.connect_socket(
+        self.socket = self.octoprintClient.create_socket(
             on_connect=on_connect,
             on_close=on_close,
             on_error=on_error,

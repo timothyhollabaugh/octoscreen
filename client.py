@@ -3,6 +3,7 @@ from __future__ import print_function
 from octoprint import init_settings
 import octoprint_client
 
+from kivy.properties import BooleanProperty 
 from kivy.properties import NumericProperty
 from kivy.properties import ListProperty
 from kivy.properties import ObjectProperty
@@ -34,12 +35,14 @@ class Client(EventDispatcher):
     currentZ = NumericProperty(0)
     progress = ObjectProperty(None, allownone=True)
     systemCommands = ObjectProperty(None, allownone=True)
-    files = ObjectProperty(None, allownone=True)
 
     profile = ObjectProperty(None, allownone=True)
     profiles = ObjectProperty(None, allownone=True)
 
     connection = ObjectProperty(None)
+
+    def updateFiles(self):
+        Logger.info("Update files not yet set!")
 
     def loadProfiles(self, data = None):
         if data == None:
@@ -132,17 +135,16 @@ class Client(EventDispatcher):
         if data != None:
             self.systemCommands = data
 
-    def loadFiles(self, data = None):
-        if data == None:
-            response = self.octoprintClient.get("/api/files")
+    def loadFiles(self):
+        self.updateFiles()
 
-            if response.status_code == 200:
-                data = response.json()
-            else:
-                return
+    def loadFilesFrom(self, location):
+        response = self.octoprintClient.get("/api/files" + location)
 
-        if data != None:
-            self.files = data
+        if response.status_code == 200:
+            return response.json()
+        else:
+            return None
 
     def loadAll(self):
         self.loadProfiles()

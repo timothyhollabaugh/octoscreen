@@ -25,3 +25,4 @@ def time(t):
         h, m, s = 0, 0, 0
 
     return str("%02d:%02d:%02d" % (h, m, s))
+

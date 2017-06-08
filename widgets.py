@@ -1,5 +1,7 @@
 from __future__ import print_function
 
+import os
+
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.gridlayout import GridLayout
 from kivy.properties import ObjectProperty
@@ -11,14 +13,20 @@ from kivy.uix.button import Button
 from kivy.uix.scrollview import ScrollView
 from kivy.uix.togglebutton import ToggleButton
 from kivy.uix.behaviors import ToggleButtonBehavior
+from kivy.uix.filechooser import FileChooser
+from kivy.uix.filechooser import FileSystemAbstract
 
 from kivy.graphics import *
+
+from kivy.logger import Logger
 
 from kivy.app import App
 
 import pprint
 
 import utils
+
+import client
 
 class FileView(ToggleButtonBehavior, BoxLayout):
     f = ObjectProperty(None)
@@ -42,42 +50,125 @@ class FileView(ToggleButtonBehavior, BoxLayout):
             Color(0.5, 0.5, 0.5, 1)
             Line(points=[self.pos[0]+15, self.pos[1], self.pos[0]+self.width-15, self.pos[1]])
 
-class FileList(GridLayout):
-    files = ListProperty(None)
+#class FileList(GridLayout):
+#    files = ListProperty(None)
+#    selected = ObjectProperty({})
+#
+#    def on_files(self, inst, files):
+#        self.cols = 1
+#        self.size_hint_y = None
+#        self.padding = (0, 0)
+#        self.spacing = (0, 0)
+#        self.bind(minimum_height=self.setter('height'))
+#
+#        self.clear_widgets()
+#
+#        for i in range(len(files)):
+#            minfile = None
+#            for f in files:
+#                if minfile == None or f['date'] < minfile['date']:
+#                    minfile = f
+#
+#            if minfile != None:
+#                files.remove(minfile)
+#                btn = FileView('files', minfile, self.selected, size_hint_y=None, height=60)
+#                btn.bind(state=self.update_selected)
+#                self.add_widget(btn)
+#
+#    def update_selected(self, inst, value):
+#        f = inst.f
+#
+#        if value == 'down':
+#            self.selected = f
+#        else:
+#            for i in ToggleButtonBehavior.get_widgets('files'):
+#                if i.state == 'down':
+#                    return
+#
+#            self.selected = {}
+#
+
+class FileList(BoxLayout):
     selected = ObjectProperty({})
 
-    def on_files(self, inst, files):
-        self.cols = 1
-        self.size_hint_y = None
-        self.padding = (0, 0)
-        self.spacing = (0, 0)
-        self.bind(minimum_height=self.setter('height'))
+    def __init__(self, **kwargs):
+        super(FileList, self).__init__(**kwargs)
+        App.get_running_app().client.updateFiles = self.updateFiles
 
-        self.clear_widgets()
-
-        for i in range(len(files)):
-            minfile = None
-            for f in files:
-                if minfile == None or f['date'] < minfile['date']:
-                    minfile = f
-
-            if minfile != None:
-                files.remove(minfile)
-                btn = FileView('files', minfile, self.selected, size_hint_y=None, height=60)
-                btn.bind(state=self.update_selected)
-                self.add_widget(btn)
-
-    def update_selected(self, inst, value):
-        f = inst.f
-
-        if value == 'down':
-            self.selected = f
+    def updateSelection(self, selection):
+        if len(selection) > 0:
+            file = App.get_running_app().client.loadFilesFrom(selection[0])
+            if file != None and 'type' in file and file['type'] != 'folder':
+                self.selected = file
         else:
-            for i in ToggleButtonBehavior.get_widgets('files'):
-                if i.state == 'down':
-                    return
+            return None
 
-            self.selected = {}
+    def updateFiles(self):
+        Logger.info("Updating Files")
+        self.ids.filechooser._update_files()
+
+class FileSystemOctoprint(FileSystemAbstract):
+    
+    path = '/'
+
+    def listdir(self, fn):
+
+        if fn == '../':
+            fn = os.path.dirname(self.path)
+
+        self.path = fn
+
+        if fn == '/':
+            return ['/local', '/sdcard']
+
+        files = App.get_running_app().client.loadFilesFrom(fn)
+
+        if 'files' in files:
+            files = files['files']
+        else:
+            return []
+
+        filelist = []
+        for file in files:
+            filelist.append(file['name'])
+
+        return filelist
+
+    def getsize(self, fn):
+
+        if fn.startswith('/sdcard/'):
+            return 0
+
+        if fn == "../":
+            return 0
+
+        if fn == '/local' or fn == '/sdcard':
+            return 0
+
+        file = App.get_running_app().client.loadFilesFrom(fn)
+
+        if 'size' in file:
+            return file['size']
+        else:
+            return 0
+
+    def is_hidden(self, fn):
+        return False
+
+    def is_dir(self, fn):
+
+        if fn.startswith('/sdcard/'):
+            return False
+
+        if fn == "../":
+            return True
+
+        if fn == '/local' or fn == '/sdcard':
+            return True
+
+        file = App.get_running_app().client.loadFilesFrom(fn)
+
+        return 'type' in file and file['type'] == 'folder'
 
 
 class SystemCommands(GridLayout):

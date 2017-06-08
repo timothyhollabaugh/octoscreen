@@ -5,6 +5,7 @@
 #:import datetime datetime
 #:import get utils.get
 #:import time utils.time
+#:import FileSystemOctoprint widgets.FileSystemOctoprint
  
 <Widget>:
     font_name: 'Ubuntu'
@@ -251,8 +252,13 @@
             size: self.texture_size[0], self.texture_size[1]
             halign: 'right'
 <FileList>:
-    files: []
     selected: {}
+
+    FileChooserListView:
+        id: filechooser
+        file_system: FileSystemOctoprint()
+        on_selection: root.updateSelection(self.selection)
+
 
 <StatusTab@BoxLayout>:
     BoxLayout:
@@ -726,12 +732,18 @@
             size: self.texture_size[0], self.texture_size[1]
             halign: 'center'
             padding: 0, 15
-        ScrollView:
-            size: self.size
-            do_scroll_x: False
-            FileList:
-                on_selected: root.selected = self.selected
-                files: get(app.client.files, ['files'], [])
+        #ScrollView:
+        #    size: self.size
+        #    do_scroll_x: False
+        #    FileList:
+        #        on_selected: root.selected = self.selected
+        #        files: get(app.client.files, ['files'], [])
+        FileList:
+            on_selected: root.selected = self.selected
+          
+        #FileChooserListView:
+        #    id: filelist
+        #    file_system: FileSystemOctoprint()
 
 <OctoprintLcd>:
 
